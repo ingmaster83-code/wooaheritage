@@ -1,0 +1,105 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <span>{{ page.do_name }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏛️ {{ page.title_h1 }}</h1>
+    <p>{{ page.subtitle }}</p>
+  </div>
+
+  <!-- 광고 -->
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <!-- 필터 -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="filterItems('all', this)">전체</button>
+    <button class="filter-btn" data-filter="유형문화유적" onclick="filterItems('유형문화유적', this)">유형문화유적</button>
+    <button class="filter-btn" data-filter="기념물" onclick="filterItems('기념물', this)">기념물</button>
+    <button class="filter-btn" data-filter="무형문화유적" onclick="filterItems('무형문화유적', this)">무형문화유적</button>
+    <button class="filter-btn" data-filter="민속자료" onclick="filterItems('민속자료', this)">민속자료</button>
+  </div>
+
+  <p id="itemCount" style="font-size:.87rem;color:#6B7280;margin-bottom:16px;"></p>
+
+  <div class="camp-grid" id="itemGrid">
+    <p style="color:#6B7280;">로딩 중...</p>
+  </div>
+
+  <!-- 안내 텍스트 -->
+  <div style="margin-top:40px;background:#F9FAFB;border-radius:14px;padding:24px 28px;">
+    <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:12px;">{{ page.do_name }} 향토유산 안내</h2>
+    <p style="color:#374151;line-height:1.8;font-size:.9375rem;margin-bottom:16px;">
+      {{ page.do_name }}의 향토유산을 유형별로 검색할 수 있습니다. 국가·광역시도 지정 문화재는 포함하지 않는,
+      지자체 조례로 지정한 지역 고유의 향토문화유적입니다.
+    </p>
+    <details style="margin-bottom:10px;">
+      <summary style="cursor:pointer;font-weight:600;padding:6px 0;">향토유산은 국가지정문화재와 뭐가 다른가요?</summary>
+      <p style="padding:6px 0 4px;color:#374151;line-height:1.7;">국가유산청이 지정하는 국보·보물 등 국가지정문화재나 광역시도 지정문화재와 달리, 향토유산은 각 지방자치단체가 조례에 따라 보존 가치가 있다고 자체 지정한 지역 유산입니다.</p>
+    </details>
+    <details>
+      <summary style="cursor:pointer;font-weight:600;padding:6px 0;">방문해도 되나요?</summary>
+      <p style="padding:6px 0 4px;color:#374151;line-height:1.7;">사유지에 위치한 곳도 많아 소유자의 관리 상태나 접근 가능 여부가 다를 수 있습니다. 방문 전 관리기관에 문의하시길 권장합니다.</p>
+    </details>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>
+
+<script>
+const DO_NAME = {{ page.do_name | jsonify }};
+let allItems = [];
+
+(async () => {
+  const resp = await fetch('/search_index.json');
+  const all  = await resp.json();
+  allItems = all.filter(f => f.doShort === DO_NAME);
+  document.getElementById('itemCount').textContent = `총 ${allItems.length}곳`;
+  renderItems(allItems);
+})();
+
+function itemCard(f) {
+  return `<a class="camp-card" href="/heritage/${f.slug}/">
+    <div class="camp-card-img-placeholder">🏛️</div>
+    <div class="camp-card-body">
+      <div class="camp-card-name">${f.n}</div>
+      <div class="camp-card-loc">📍 ${f.sigungu || ''}</div>
+      <div class="camp-card-tags">
+        <span class="tag tag-type">${f.kind || ''}</span>
+        ${f.type ? `<span class="tag tag-env">${f.type}</span>` : ''}
+      </div>
+    </div>
+  </a>`;
+}
+
+function filterItems(kind, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  let filtered = allItems;
+  if (kind !== 'all') {
+    filtered = allItems.filter(f => f.kind === kind);
+  }
+  document.getElementById('itemCount').textContent = `총 ${filtered.length}곳`;
+  renderItems(filtered);
+}
+
+function renderItems(items) {
+  const grid = document.getElementById('itemGrid');
+  if (items.length === 0) {
+    grid.innerHTML = '<p style="color:#6B7280;grid-column:1/-1;">해당 조건의 향토유산이 없습니다.</p>';
+    return;
+  }
+  grid.innerHTML = items.map(itemCard).join('');
+}
+</script>
