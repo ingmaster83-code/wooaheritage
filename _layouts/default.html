@@ -42,7 +42,8 @@
       <span class="logo-text">우아유산</span>
     </a>
     <nav class="header-nav">
-      <a href="{{ '/region/' | relative_url }}">지역별</a>
+      <a href="{{ '/region/' | relative_url }}">향토유산</a>
+      <a href="{{ '/museum-region/' | relative_url }}">박물관·미술관</a>
       <a href="{{ '/search/' | relative_url }}">검색</a>
       <a href="https://wooahouse.com">WooaHouse →</a>
     </nav>
@@ -52,7 +53,7 @@
 <script src="{{ '/assets/js/wooa-sites-bar.js' | relative_url }}"></script>
 <script src="{{ '/assets/js/ad-dev-placeholder.js' | relative_url }}"></script>
 
-{% unless page.layout == 'heritage' or page.layout == 'region' or page.url == '/' %}
+{% unless page.layout == 'heritage' or page.layout == 'region' or page.layout == 'museum' or page.layout == 'museum-region' or page.url == '/' %}
 <div class="top-ad-bar">
   {% include ad.html %}
 </div>
