@@ -1,0 +1,98 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <span>{{ page.do_name }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🏞️ {{ page.title_h1 }}</h1>
+    <p>{{ page.subtitle }}</p>
+  </div>
+
+  <!-- 광고 -->
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <!-- 필터 -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="filterItems('all', this)">전체</button>
+    <button class="filter-btn" data-filter="관광지" onclick="filterItems('관광지', this)">관광지</button>
+    <button class="filter-btn" data-filter="관광단지" onclick="filterItems('관광단지', this)">관광단지</button>
+  </div>
+
+  <p id="itemCount" style="font-size:.87rem;color:#6B7280;margin-bottom:16px;"></p>
+
+  <div class="camp-grid" id="itemGrid">
+    <p style="color:#6B7280;">로딩 중...</p>
+  </div>
+
+  <!-- 안내 텍스트 -->
+  <div style="margin-top:40px;background:#F9FAFB;border-radius:14px;padding:24px 28px;">
+    <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:12px;">{{ page.do_name }} 관광지 안내</h2>
+    <p style="color:#374151;line-height:1.8;font-size:.9375rem;margin-bottom:16px;">
+      {{ page.do_name }}의 지자체 지정 관광지·관광단지를 검색할 수 있습니다. 「관광진흥법」 등에 따라
+      기초자치단체장이 신청하고 광역자치단체장이 지정한 공식 관광지역 정보입니다(관광특구 제외).
+    </p>
+    <details>
+      <summary style="cursor:pointer;font-weight:600;padding:6px 0;">관광지와 관광단지는 뭐가 다른가요?</summary>
+      <p style="padding:6px 0 4px;color:#374151;line-height:1.7;">관광지는 자연경관·문화유적 등을 갖춘 지역이고, 관광단지는 숙박·오락·휴양시설 등을 종합적으로 갖춘 대규모 관광 거점입니다.</p>
+    </details>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>
+
+<script>
+const DO_NAME = {{ page.do_name | jsonify }};
+let allItems = [];
+
+(async () => {
+  const resp = await fetch('/spot_search_index.json');
+  const all  = await resp.json();
+  allItems = all.filter(f => f.doShort === DO_NAME);
+  document.getElementById('itemCount').textContent = `총 ${allItems.length}곳`;
+  renderItems(allItems);
+})();
+
+function itemCard(f) {
+  return `<a class="camp-card" href="/spot/${f.slug}/">
+    <div class="camp-card-img-placeholder">🏞️</div>
+    <div class="camp-card-body">
+      <div class="camp-card-name">${f.n}</div>
+      <div class="camp-card-loc">📍 ${f.sigungu || ''}</div>
+      <div class="camp-card-tags">
+        <span class="tag tag-type">${f.type || ''}</span>
+      </div>
+    </div>
+  </a>`;
+}
+
+function filterItems(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  let filtered = allItems;
+  if (type !== 'all') {
+    filtered = allItems.filter(f => f.type === type);
+  }
+  document.getElementById('itemCount').textContent = `총 ${filtered.length}곳`;
+  renderItems(filtered);
+}
+
+function renderItems(items) {
+  const grid = document.getElementById('itemGrid');
+  if (items.length === 0) {
+    grid.innerHTML = '<p style="color:#6B7280;grid-column:1/-1;">해당 조건의 관광지가 없습니다.</p>';
+    return;
+  }
+  grid.innerHTML = items.map(itemCard).join('');
+}
+</script>
