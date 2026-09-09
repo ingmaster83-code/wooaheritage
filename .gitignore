@@ -11,3 +11,4 @@ scripts/__pycache__/
 _rawdata/heritage_raw.json
 _rawdata/museum_raw.json
 _rawdata/spot_raw.json
+_rawdata/info_raw.json

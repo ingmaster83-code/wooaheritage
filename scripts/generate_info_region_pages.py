@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+"""info-region/{시도}/index.html 프론트매터 페이지 생성"""
+import json
+from pathlib import Path
+from collections import Counter
+
+ROOT = Path(__file__).parent.parent
+DATA = json.loads((ROOT / "_rawdata" / "info.json").read_text(encoding="utf-8"))
+
+FULLNAME = {
+    "서울": "서울특별시", "경기": "경기도", "인천": "인천광역시", "강원": "강원특별자치도",
+    "충북": "충청북도", "충남": "충청남도", "대전": "대전광역시", "세종": "세종특별자치시",
+    "전북": "전북특별자치도", "전남": "전라남도", "광주": "광주광역시", "경북": "경상북도",
+    "경남": "경상남도", "부산": "부산광역시", "대구": "대구광역시", "울산": "울산광역시",
+    "제주": "제주특별자치도",
+}
+
+counts = Counter(f["doShort"] for f in DATA)
+
+for region in sorted(counts):
+    full = FULLNAME.get(region, region)
+    cnt = counts[region]
+    d = ROOT / "info-region" / region
+    d.mkdir(parents=True, exist_ok=True)
+
+    content = f"""---
+layout: info-region
+title: {full} 관광안내소
+description: {full} 관광안내소 정보. 운영시간, 외국어 안내 가능 여부, 위치를 확인하세요.
+do_name: {region}
+title_h1: {full} 관광안내소 {cnt}곳
+subtitle: {full} 지역 관광안내소를 확인하세요.
+---
+"""
+    (d / "index.html").write_text(content, encoding="utf-8")
+    print(f"  {region} ({full}): {cnt}곳")
+
+print(f"\n완료: {len(counts)}개 지역 페이지 생성")

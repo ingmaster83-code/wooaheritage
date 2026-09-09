@@ -1,0 +1,73 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <span>{{ page.do_name }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🛎️ {{ page.title_h1 }}</h1>
+    <p>{{ page.subtitle }}</p>
+  </div>
+
+  <!-- 광고 -->
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <p id="itemCount" style="font-size:.87rem;color:#6B7280;margin-bottom:16px;"></p>
+
+  <div class="camp-grid" id="itemGrid">
+    <p style="color:#6B7280;">로딩 중...</p>
+  </div>
+
+  <!-- 안내 텍스트 -->
+  <div style="margin-top:40px;background:#F9FAFB;border-radius:14px;padding:24px 28px;">
+    <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:12px;">{{ page.do_name }} 관광안내소 안내</h2>
+    <p style="color:#374151;line-height:1.8;font-size:.9375rem;">
+      {{ page.do_name }}의 관광안내소 위치와 운영시간, 외국어 안내 가능 여부를 확인할 수 있습니다. 「관광진흥법」 등에 따라
+      지방자치단체가 운영하는 상설 관광안내소 정보입니다.
+    </p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>
+
+<script>
+const DO_NAME = {{ page.do_name | jsonify }};
+
+(async () => {
+  const resp = await fetch('/info_search_index.json');
+  const all  = await resp.json();
+  const items = all.filter(f => f.doShort === DO_NAME);
+  document.getElementById('itemCount').textContent = `총 ${items.length}곳`;
+  renderItems(items);
+})();
+
+function itemCard(f) {
+  return `<a class="camp-card" href="/info/${f.slug}/">
+    <div class="camp-card-img-placeholder">🛎️</div>
+    <div class="camp-card-body">
+      <div class="camp-card-name">${f.n}</div>
+      <div class="camp-card-loc">📍 ${f.sigungu || ''}</div>
+      ${f.langs && f.langs.length ? `<div class="camp-card-tags"><span class="tag tag-safe">🌐 ${f.langs.join('·')}</span></div>` : ''}
+    </div>
+  </a>`;
+}
+
+function renderItems(items) {
+  const grid = document.getElementById('itemGrid');
+  if (items.length === 0) {
+    grid.innerHTML = '<p style="color:#6B7280;grid-column:1/-1;">해당 지역의 관광안내소가 없습니다.</p>';
+    return;
+  }
+  grid.innerHTML = items.map(itemCard).join('');
+}
+</script>

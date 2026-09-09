@@ -9,26 +9,34 @@ layout: default
   <nav class="breadcrumb" aria-label="위치">
     <a href="/">홈</a>
     <span>›</span>
-    <a href="/museum-region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <a href="/info-region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
     <span>›</span>
-    <span>{{ page.museumName }}</span>
+    <span>{{ page.infoName }}</span>
   </nav>
 
   <div class="gallery" id="gallery">
-    <div class="gallery-placeholder">🖼️</div>
+    <div class="gallery-placeholder">🛎️</div>
   </div>
 
   <!-- 헤더 -->
   <div class="camp-header">
     <div class="camp-tags">
-      {% if page.type and page.type != "" %}<span class="tag tag-type">{{ page.type }}</span>{% endif %}
-      <span class="tag tag-safe">📍 {{ page.doShort }} {{ page.sigungu }}</span>
+      {% if page.langs and page.langs.size > 0 %}<span class="tag tag-safe">🌐 {{ page.langs | join: "·" }} 가능</span>{% endif %}
+      <span class="tag tag-env">📍 {{ page.doShort }} {{ page.sigungu }}</span>
     </div>
-    <h1 class="camp-title">{{ page.museumName }}</h1>
+    <h1 class="camp-title">{{ page.infoName }}</h1>
+    {% if page.location and page.location != "" %}
+    <div class="camp-info-row">
+      <span class="camp-info-icon">🧭</span>
+      <span>{{ page.location }}</span>
+    </div>
+    {% endif %}
+    {% if page.addr and page.addr != "" %}
     <div class="camp-info-row">
       <span class="camp-info-icon">📍</span>
       <span>{{ page.addr }}</span>
     </div>
+    {% endif %}
     {% if page.tel and page.tel != "" %}
     <div class="camp-info-row">
       <span class="camp-info-icon">📞</span>
@@ -56,36 +64,21 @@ layout: default
   </div>
   {% endif %}
 
-  <!-- 관람시간·요금 -->
+  <!-- 운영 정보 -->
   <div class="camp-section">
-    <h2>🕐 관람시간·요금</h2>
+    <h2>🕐 운영 정보</h2>
     <table style="width:100%;border-collapse:collapse;font-size:.92rem;">
-      {% if page.weekdayOpen and page.weekdayOpen != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;width:130px;">평일 관람시간</td><td>{{ page.weekdayOpen }} ~ {{ page.weekdayClose }}</td></tr>
+      {% if page.summerOpen and page.summerOpen != "" %}
+      <tr><td style="padding:8px 0;color:#6B7280;width:130px;">하절기 운영시간</td><td>{{ page.summerOpen }} ~ {{ page.summerClose }}</td></tr>
       {% endif %}
-      {% if page.holidayOpen and page.holidayOpen != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">공휴일 관람시간</td><td>{{ page.holidayOpen }} ~ {{ page.holidayClose }}</td></tr>
+      {% if page.winterOpen and page.winterOpen != "" %}
+      <tr><td style="padding:8px 0;color:#6B7280;">동절기 운영시간</td><td>{{ page.winterOpen }} ~ {{ page.winterClose }}</td></tr>
       {% endif %}
-      {% if page.restInfo and page.restInfo != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">휴관일</td><td>{{ page.restInfo }}</td></tr>
+      {% if page.restDay and page.restDay != "" %}
+      <tr><td style="padding:8px 0;color:#6B7280;">휴무일</td><td>{{ page.restDay }}</td></tr>
       {% endif %}
-      {% if page.adultCharge and page.adultCharge != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">어른 관람료</td><td>{{ page.adultCharge }}</td></tr>
-      {% endif %}
-      {% if page.youthCharge and page.youthCharge != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">청소년 관람료</td><td>{{ page.youthCharge }}</td></tr>
-      {% endif %}
-      {% if page.childCharge and page.childCharge != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">어린이 관람료</td><td>{{ page.childCharge }}</td></tr>
-      {% endif %}
-      {% if page.etcChargeInfo and page.etcChargeInfo != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">요금 관련 안내</td><td>{{ page.etcChargeInfo }}</td></tr>
-      {% endif %}
-      {% if page.facilityInfo and page.facilityInfo != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">편의시설</td><td>{{ page.facilityInfo }}</td></tr>
-      {% endif %}
-      {% if page.transportInfo and page.transportInfo != "" %}
-      <tr><td style="padding:8px 0;color:#6B7280;">교통편</td><td>{{ page.transportInfo }}</td></tr>
+      {% if page.adiSvc and page.adiSvc != "" %}
+      <tr><td style="padding:8px 0;color:#6B7280;">부가서비스</td><td>{{ page.adiSvc }}</td></tr>
       {% endif %}
       {% if page.operInstitution and page.operInstitution != "" %}
       <tr><td style="padding:8px 0;color:#6B7280;">운영기관</td><td>{{ page.operInstitution }}</td></tr>
@@ -95,7 +88,7 @@ layout: default
       {% endif %}
     </table>
     <p style="font-size:.82rem;color:#92400E;margin-top:14px;">
-      지방자치단체 공공데이터 기준으로, 관람시간·요금이 실제와 다를 수 있습니다. 방문 전 반드시 홈페이지나 전화로 확인하세요.
+      지방자치단체 공공데이터 기준으로, 운영시간이 실제와 다를 수 있습니다. 방문 전 홈페이지나 전화로 확인하세요.
     </p>
   </div>
 
@@ -111,12 +104,12 @@ layout: default
     {% include ad.html %}
   </div>
 
-  <!-- 같은 지역 다른 박물관·미술관 -->
+  <!-- 같은 지역 다른 관광안내소 -->
   <div class="region-camps">
-    <h2>📍 {{ page.doShort }} 다른 박물관·미술관</h2>
+    <h2>📍 {{ page.doShort }} 다른 관광안내소</h2>
     <div id="regionGrid" class="camp-grid"></div>
     <p style="margin-top:16px;">
-      <a href="/museum-region/{{ page.doShort | uri_escape }}/">{{ page.doShort }} 박물관·미술관 전체 보기 →</a>
+      <a href="/info-region/{{ page.doShort | uri_escape }}/">{{ page.doShort }} 관광안내소 전체 보기 →</a>
     </p>
   </div>
 
@@ -124,8 +117,8 @@ layout: default
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Museum",
-    "name": "{{ page.museumName | escape }}",
+    "@type": "TouristInformationCenter",
+    "name": "{{ page.infoName | escape }}",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "{{ page.addr | escape }}",
@@ -135,9 +128,7 @@ layout: default
       "@type": "GeoCoordinates",
       "latitude": {{ page.lat }},
       "longitude": {{ page.lng }}
-    }{% endif %}{% if page.tel and page.tel != "" %},
-    "telephone": "{{ page.tel | escape }}"{% endif %}{% if page.intro and page.intro != "" %},
-    "description": "{{ page.intro | escape | truncate: 300 }}"{% endif %}
+    }{% endif %}
   }
   </script>
 
@@ -169,7 +160,7 @@ layout: default
   }
 
   try {
-    const resp = await fetch('/museum_search_index.json');
+    const resp = await fetch('/info_search_index.json');
     const all = await resp.json();
 
     const region = all
@@ -183,12 +174,11 @@ layout: default
   } catch(e) {}
 
   function itemCard(f) {
-    return `<a class="camp-card" href="/museum/${f.slug}/">
-      <div class="camp-card-img-placeholder">🖼️</div>
+    return `<a class="camp-card" href="/info/${f.slug}/">
+      <div class="camp-card-img-placeholder">🛎️</div>
       <div class="camp-card-body">
         <div class="camp-card-name">${f.n}</div>
         <div class="camp-card-loc">📍 ${f.sigungu || f.doShort || ''}</div>
-        <div class="camp-card-tags"><span class="tag tag-type">${f.type || ''}</span></div>
       </div>
     </a>`;
   }

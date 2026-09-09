@@ -45,6 +45,7 @@
       <a href="{{ '/region/' | relative_url }}">향토유산</a>
       <a href="{{ '/museum-region/' | relative_url }}">박물관·미술관</a>
       <a href="{{ '/spot-region/' | relative_url }}">관광지</a>
+      <a href="{{ '/info-region/' | relative_url }}">관광안내소</a>
       <a href="{{ '/search/' | relative_url }}">검색</a>
       <a href="https://wooahouse.com">WooaHouse →</a>
     </nav>
@@ -54,7 +55,7 @@
 <script src="{{ '/assets/js/wooa-sites-bar.js' | relative_url }}"></script>
 <script src="{{ '/assets/js/ad-dev-placeholder.js' | relative_url }}"></script>
 
-{% unless page.layout == 'heritage' or page.layout == 'region' or page.layout == 'museum' or page.layout == 'museum-region' or page.layout == 'spot' or page.layout == 'spot-region' or page.url == '/' %}
+{% unless page.layout == 'heritage' or page.layout == 'region' or page.layout == 'museum' or page.layout == 'museum-region' or page.layout == 'spot' or page.layout == 'spot-region' or page.layout == 'info' or page.layout == 'info-region' or page.url == '/' %}
 <div class="top-ad-bar">
   {% include ad.html %}
 </div>
